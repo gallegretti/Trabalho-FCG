@@ -401,14 +401,13 @@ int main(int argc, char* argv[])
         DrawVirtualObject("sphere");
 
 
-/*
-        // Desenhamos o modelo do coelho
-        model = Matrix_Translate(1.0f,0.0f,0.0f)
-              * Matrix_Rotate_X(g_AngleX + (float)glfwGetTime() * 0.1f);
+
+        // Desenhamos o modelo da vaca
+        model = Matrix_Translate(0.0f,-0.5f,0.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, BUNNY);
-        DrawVirtualObject("bunny");
-*/
+        glUniform1i(object_id_uniform, SPHERE);
+        DrawVirtualObject("cow");
+
 
         // Desenhamos o plano do chão
         model = Matrix_Translate(0.0f,-1.1f,0.0f)
