@@ -3,18 +3,14 @@
 //       Departamento de Informática Aplicada
 //
 // INF01047 Fundamentos de Computação Gráfica 2017/2
+//       Alunos: Gabriel Allegretti, Lucas Bertolini
 //               Prof. Eduardo Gastal
 //
-//                   LABORATÓRIO 4
+//                  Trabalho Final
 //
+// Usado LABORATÓRIO 5 como base
 
-// Arquivos "headers" padrões de C podem ser incluídos em um
-// programa C++, sendo necessário somente adicionar o caractere
-// "c" antes de seu nome, e remover o sufixo ".h". Exemplo:
-//    #include <stdio.h> // Em C
-//  vira
-//    #include <cstdio> // Em C++
-//
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -24,6 +20,7 @@
 #include <stack>
 #include <string>
 #include <vector>
+#include <limits>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -40,6 +37,8 @@
 
 // Headers da biblioteca para carregar modelos obj
 #include <tiny_obj_loader.h>
+
+#include <stb_image.h>
 
 // Headers locais, definidos na pasta "include/"
 #include "utils.h"
@@ -82,6 +81,7 @@ void PopMatrix(glm::mat4& M);
 void BuildTrianglesAndAddToVirtualScene(ObjModel*); // Constrói representação de um ObjModel como malha de triângulos para renderização
 void ComputeNormals(ObjModel* model); // Computa normais de um ObjModel, caso não existam.
 void LoadShadersFromFiles(); // Carrega os shaders de vértice e fragmento, criando um programa de GPU
+void LoadTextureImage(const char* filename); // Função que carrega imagens de textura
 void DrawVirtualObject(const char* object_name); // Desenha um objeto armazenado em g_VirtualScene
 GLuint LoadShader_Vertex(const char* filename);   // Carrega um vertex shader
 GLuint LoadShader_Fragment(const char* filename); // Carrega um fragment shader
@@ -125,6 +125,8 @@ struct SceneObject
     int          num_indices; // Número de índices do objeto dentro do vetor indices[] definido em BuildTrianglesAndAddToVirtualScene()
     GLenum       rendering_mode; // Modo de rasterização (GL_TRIANGLES, GL_TRIANGLE_STRIP, etc.)
     GLuint       vertex_array_object_id; // ID do VAO onde estão armazenados os atributos do modelo
+    glm::vec3    bbox_min; // Axis-Aligned Bounding Box do objeto
+    glm::vec3    bbox_max;
 };
 
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
@@ -182,6 +184,11 @@ GLint model_uniform;
 GLint view_uniform;
 GLint projection_uniform;
 GLint object_id_uniform;
+GLint bbox_min_uniform;
+GLint bbox_max_uniform;
+
+// Número de texturas carregadas pela função LoadTextureImage()
+GLuint g_NumLoadedTextures = 0;
 
 int main(int argc, char* argv[])
 {
@@ -253,6 +260,10 @@ int main(int argc, char* argv[])
     //
     LoadShadersFromFiles();
 
+    // Carregamos duas imagens para serem utilizadas como textura
+    LoadTextureImage("../../data/grass.jpg");      // TextureImage0
+    LoadTextureImage("../../data/tc-earth_daymap_surface.jpg"); // TextureImage1
+
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
     ComputeNormals(&spheremodel);
@@ -265,6 +276,10 @@ int main(int argc, char* argv[])
     ObjModel planemodel("../../data/plane.obj");
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
+
+    ObjModel cowmodel("../../data/cow.obj");
+    ComputeNormals(&cowmodel);
+    BuildTrianglesAndAddToVirtualScene(&cowmodel);
 
     if ( argc > 1 )
     {
@@ -373,27 +388,33 @@ int main(int argc, char* argv[])
         #define SPHERE 0
         #define BUNNY  1
         #define PLANE  2
+        #define COW    3
 
         // Desenhamos o modelo da esfera
-        model = Matrix_Translate(-1.0f,0.0f,0.0f);
+
+        model = Matrix_Translate(-1.0f,8.0f,0.0f)
+              * Matrix_Rotate_Z(0.6f)
+              * Matrix_Rotate_X(0.2f)
+              * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SPHERE);
         DrawVirtualObject("sphere");
 
+
+/*
         // Desenhamos o modelo do coelho
         model = Matrix_Translate(1.0f,0.0f,0.0f)
-              * Matrix_Rotate_Z(g_AngleZ)
-              * Matrix_Rotate_Y(g_AngleY)
-              * Matrix_Rotate_X(g_AngleX);
+              * Matrix_Rotate_X(g_AngleX + (float)glfwGetTime() * 0.1f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, BUNNY);
         DrawVirtualObject("bunny");
+*/
 
-        // Desenhamos o modelo do plano
-        model = Matrix_Translate(0.0f, -1.0f, 0.0f)
-              * Matrix_Scale(40.0f, 1.0f, 40.0f);
+        // Desenhamos o plano do chão
+        model = Matrix_Translate(0.0f,-1.1f,0.0f)
+            * Matrix_Scale(5.0f, 5.0f, 5.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(1, PLANE);
+        glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
 
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
@@ -405,10 +426,10 @@ int main(int argc, char* argv[])
 
         // Imprimimos na tela os ângulos de Euler que controlam a rotação do
         // terceiro cubo.
-        TextRendering_ShowEulerAngles(window);
+        //TextRendering_ShowEulerAngles(window);
 
         // Imprimimos na informação sobre a matriz de projeção sendo utilizada.
-        TextRendering_ShowProjection(window);
+        //TextRendering_ShowProjection(window);
 
         // Imprimimos na tela informação sobre o número de quadros renderizados
         // por segundo (frames per second).
@@ -436,6 +457,58 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+// Função que carrega uma imagem para ser utilizada como textura
+void LoadTextureImage(const char* filename)
+{
+    printf("Carregando imagem \"%s\"... ", filename);
+
+    // Primeiro fazemos a leitura da imagem do disco
+    stbi_set_flip_vertically_on_load(true);
+    int width;
+    int height;
+    int channels;
+    unsigned char *data = stbi_load(filename, &width, &height, &channels, 3);
+
+    if ( data == NULL )
+    {
+        fprintf(stderr, "ERROR: Cannot open image file \"%s\".\n", filename);
+        std::exit(EXIT_FAILURE);
+    }
+
+    printf("OK (%dx%d).\n", width, height);
+
+    // Agora criamos objetos na GPU com OpenGL para armazenar a textura
+    GLuint texture_id;
+    GLuint sampler_id;
+    glGenTextures(1, &texture_id);
+    glGenSamplers(1, &sampler_id);
+
+    // Veja slide 160 do documento "Aula_20_e_21_Mapeamento_de_Texturas.pdf"
+    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Parâmetros de amostragem da textura. Falaremos sobre eles em uma próxima aula.
+    glSamplerParameteri(sampler_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glSamplerParameteri(sampler_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Agora enviamos a imagem lida do disco para a GPU
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+
+    GLuint textureunit = g_NumLoadedTextures;
+    glActiveTexture(GL_TEXTURE0 + textureunit);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindSampler(textureunit, sampler_id);
+
+    stbi_image_free(data);
+
+    g_NumLoadedTextures += 1;
+}
+
 // Função que desenha um objeto armazenado em g_VirtualScene. Veja definição
 // dos objetos na função BuildTrianglesAndAddToVirtualScene().
 void DrawVirtualObject(const char* object_name)
@@ -444,6 +517,13 @@ void DrawVirtualObject(const char* object_name)
     // vértices apontados pelo VAO criado pela função BuildTrianglesAndAddToVirtualScene(). Veja
     // comentários detalhados dentro da definição de BuildTrianglesAndAddToVirtualScene().
     glBindVertexArray(g_VirtualScene[object_name].vertex_array_object_id);
+
+    // Setamos as variáveis "bbox_min" e "bbox_max" do fragment shader
+    // com os parâmetros da axis-aligned bounding box (AABB) do modelo.
+    glm::vec3 bbox_min = g_VirtualScene[object_name].bbox_min;
+    glm::vec3 bbox_max = g_VirtualScene[object_name].bbox_max;
+    glUniform4f(bbox_min_uniform, bbox_min.x, bbox_min.y, bbox_min.z, 1.0f);
+    glUniform4f(bbox_max_uniform, bbox_max.x, bbox_max.y, bbox_max.z, 1.0f);
 
     // Pedimos para a GPU rasterizar os vértices dos eixos XYZ
     // apontados pelo VAO como linhas. Veja a definição de
@@ -503,6 +583,15 @@ void LoadShadersFromFiles()
     view_uniform            = glGetUniformLocation(program_id, "view"); // Variável da matriz "view" em shader_vertex.glsl
     projection_uniform      = glGetUniformLocation(program_id, "projection"); // Variável da matriz "projection" em shader_vertex.glsl
     object_id_uniform       = glGetUniformLocation(program_id, "object_id"); // Variável "object_id" em shader_fragment.glsl
+    bbox_min_uniform        = glGetUniformLocation(program_id, "bbox_min");
+    bbox_max_uniform        = glGetUniformLocation(program_id, "bbox_max");
+
+    // Variáveis em "shader_fragment.glsl" para acesso das imagens de textura
+    glUseProgram(program_id);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage0"), 0);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
+    glUseProgram(0);
 }
 
 // Função que pega a matriz M e guarda a mesma no topo da pilha
@@ -564,9 +653,7 @@ void ComputeNormals(ObjModel* model)
             const glm::vec4  b = vertices[1];
             const glm::vec4  c = vertices[2];
 
-            // PREENCHA AQUI o cálculo da normal de um triângulo cujos vértices
-            // estão nos pontos "a", "b", e "c", definidos no sentido anti-horário.
-            const glm::vec4 n = crossproduct(a-b, a-c); //glm::vec4(0.0f,0.0f,0.0f,0.0f);
+            const glm::vec4  n = crossproduct(b-a,c-a);
 
             for (size_t vertex = 0; vertex < 3; ++vertex)
             {
@@ -607,6 +694,12 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
         size_t first_index = indices.size();
         size_t num_triangles = model->shapes[shape].mesh.num_face_vertices.size();
 
+        const float minval = std::numeric_limits<float>::min();
+        const float maxval = std::numeric_limits<float>::max();
+
+        glm::vec3 bbox_min = glm::vec3(maxval,maxval,maxval);
+        glm::vec3 bbox_max = glm::vec3(minval,minval,minval);
+
         for (size_t triangle = 0; triangle < num_triangles; ++triangle)
         {
             assert(model->shapes[shape].mesh.num_face_vertices[triangle] == 3);
@@ -625,6 +718,13 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
                 model_coefficients.push_back( vy ); // Y
                 model_coefficients.push_back( vz ); // Z
                 model_coefficients.push_back( 1.0f ); // W
+
+                bbox_min.x = std::min(bbox_min.x, vx);
+                bbox_min.y = std::min(bbox_min.y, vy);
+                bbox_min.z = std::min(bbox_min.z, vz);
+                bbox_max.x = std::max(bbox_max.x, vx);
+                bbox_max.y = std::max(bbox_max.y, vy);
+                bbox_max.z = std::max(bbox_max.z, vz);
 
                 if ( model->attrib.normals.size() >= (size_t)3*idx.normal_index )
                 {
@@ -655,6 +755,9 @@ void BuildTrianglesAndAddToVirtualScene(ObjModel* model)
         theobject.num_indices    = last_index - first_index + 1; // Número de indices
         theobject.rendering_mode = GL_TRIANGLES;       // Índices correspondem ao tipo de rasterização GL_TRIANGLES.
         theobject.vertex_array_object_id = vertex_array_object_id;
+
+        theobject.bbox_min = bbox_min;
+        theobject.bbox_max = bbox_max;
 
         g_VirtualScene[model->shapes[shape].name] = theobject;
     }
@@ -1014,8 +1117,14 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     // movimentação da "rodinha", simulando um ZOOM.
     g_CameraDistance -= 0.1f*yoffset;
 
-    if (g_CameraDistance < 0.0f)
-        g_CameraDistance = 0.0f;
+    // Uma câmera look-at nunca pode estar exatamente "em cima" do ponto para
+    // onde ela está olhando, pois isto gera problemas de divisão por zero na
+    // definição do sistema de coordenadas da câmera. Isto é, a variável abaixo
+    // nunca pode ser zero. Versões anteriores deste código possuíam este bug,
+    // o qual foi detectado pelo aluno Vinicius Fraga (2017/2).
+    const float verysmallnumber = std::numeric_limits<float>::epsilon();
+    if (g_CameraDistance < verysmallnumber)
+        g_CameraDistance = verysmallnumber;
 }
 
 // Definição da função que será chamada sempre que o usuário pressionar alguma
