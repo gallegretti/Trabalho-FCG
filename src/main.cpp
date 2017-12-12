@@ -45,6 +45,7 @@
 #include "matrices.h"
 
 // Headers especificos do jogo
+#include "game/world.h"
 #include "game/player.h"
 
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -155,6 +156,7 @@ float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
 float g_CameraDistance = 3.5f; // Distância da câmera para a origem
 
 // Variavel do jogador
+auto world = World();
 auto player = Player();
 move_state player_actions;
 
@@ -386,11 +388,16 @@ int main(int argc, char* argv[])
 
 
 
-        // Desenhamos o modelo da vaca
-        model = Matrix_Translate(0.0f,-0.5f,0.0f);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, SPHERE);
-        DrawVirtualObject("cow");
+        for (auto &cow : world.cows)
+        {
+            // Desenhamos o modelo da vaca
+            model = Matrix_Translate(cow.position.x,cow.position.y,cow.position.z);
+            glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+            glUniform1i(object_id_uniform, SPHERE);
+            DrawVirtualObject("cow");
+        }
+
+
 
 
         // Desenhamos o plano do chão
