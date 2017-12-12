@@ -10,6 +10,10 @@ Player::Player()
 
 void Player::update(move_state &actions)
 {
+    // Reseta vetor up
+    up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+
+    // Faz acoes
     if (actions.up)
     {
         moveUp();
@@ -34,23 +38,13 @@ void Player::update(move_state &actions)
     {
         moveRight();
     }
-
     yaw(actions.dx);
 
-    // Limita velocidade maxima no plano x/y
-    /*
-    float horizontal_speed = sqrt(moving.x*moving.x + moving.y*moving.y);
-    if (horizontal_speed > 1.0f)
-    {
-        moving.x /= horizontal_speed;
-        moving.y /= horizontal_speed;
-    }
-    */
-
+    // Atualiza posicao
     position += moving;
 
     // Faz uma desaceleração mais suave
-    moving = moving * 0.995f;
+    moving -= moving * 0.002f;
 
     // Efeito de perda de altitude
     position.y -= 0.0001f;
@@ -78,27 +72,30 @@ void Player::moveDown()
 
 void Player::moveFoward()
 {
-    moving += (foward * 0.00005f);
+    moving += (foward * 0.00002f);
+    up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f) * Matrix_Rotate(0.5f, crossproduct(foward, up));
 }
 
 void Player::moveBackward()
 {
-    moving += (-foward * 0.00005f);
+    moving += (-foward * 0.000015f);
 }
 
 void Player::moveLeft()
 {
-    moving += -crossproduct(foward, up) * 0.00005f;
+    moving += -crossproduct(foward, up) * 0.000015f;
+    up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f) * Matrix_Rotate(0.05f, foward);
 }
 
 void Player::moveRight()
 {
-    moving += crossproduct(foward, up) * 0.00005f;
+    moving += crossproduct(foward, up) * 0.000015f;
+    up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f) * Matrix_Rotate(-0.05f, foward);
 }
 
 void Player::yaw(float dx)
 {
-    foward = foward * Matrix_Rotate_Y(dx * 0.001f);
+    foward = foward * Matrix_Rotate_Y(dx * 0.005f);
 }
 
 
