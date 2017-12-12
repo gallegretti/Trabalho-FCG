@@ -4,6 +4,7 @@ Player::Player()
 {
     position = glm::vec4(-100.0f, 5.0f, 1.0f, 1.0f);
     foward = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    camera = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f); // TODO:
     up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     moving = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 }
@@ -47,7 +48,7 @@ void Player::update(move_state &actions)
     moving -= moving * 0.002f;
 
     // Efeito de perda de altitude
-    position.y -= 0.0001f;
+    position.y -= 0.0002f;
 
     // Colisão com o chão
     if (position.y < 0)
@@ -57,6 +58,9 @@ void Player::update(move_state &actions)
 
     // Zera a rotacao
     actions.dx = 0.0f;
+
+    // Camera vai ser o vetor foward um pouco para baixo
+    camera = foward * Matrix_Rotate(0.3f, crossproduct(foward, up));
 }
 
 

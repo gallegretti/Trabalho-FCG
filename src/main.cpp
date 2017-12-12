@@ -321,7 +321,7 @@ int main(int argc, char* argv[])
 
         // Calcula a posicao da camera de acordo com o jogador
         glm::vec4 camera_position_c  = world.player.position;
-        glm::vec4 camera_lookat_l    = world.player.position + world.player.foward;
+        glm::vec4 camera_lookat_l    = world.player.position + world.player.camera;
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
         glm::vec4 camera_up_vector   = world.player.up;
 
@@ -374,21 +374,20 @@ int main(int argc, char* argv[])
         #define PLANE  2
         #define COW    3
 
-        // Desenhamos o modelo da esfera
-
-        model = Matrix_Translate(-1.0f,8.0f,0.0f)
-              * Matrix_Rotate_Z(0.6f)
-              * Matrix_Rotate_X(0.2f)
-              * Matrix_Rotate_Y((float)glfwGetTime() * 0.1f);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, SPHERE);
-        DrawVirtualObject("sphere");
-
-
-
-        for (auto &cow : world.cows)
+        // Desenhamos os misseis
+        for (const auto &missle : world.missiles)
         {
-            // Desenhamos o modelo da vaca
+            // TODO: Mudar o modelo, ajustar orientação
+            model = Matrix_Translate(missle.position.x, missle.position.y, missle.position.z);
+            glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+            glUniform1i(object_id_uniform, SPHERE);
+            DrawVirtualObject("sphere");
+        }
+
+
+        // Desenhamos as vacas
+        for (const auto &cow : world.cows)
+        {
             model = Matrix_Translate(cow.position.x,cow.position.y,cow.position.z);
             glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
             glUniform1i(object_id_uniform, SPHERE);
@@ -1080,6 +1079,11 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         LoadShadersFromFiles();
         fprintf(stdout,"Shaders recarregados!\n");
         fflush(stdout);
+    }
+
+    if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS)
+    {
+        player_actions.fire = true;
     }
 
     if (key == GLFW_KEY_D && action == GLFW_PRESS)

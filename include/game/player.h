@@ -3,13 +3,16 @@
 #include "matrices.h"
 struct move_state
 {
+    // Movimentação
     bool up = false;
     bool down = false;
     bool foward = false;
     bool backward = false;
     bool left = false;
     bool right = false;
-
+    // Atirar missel
+    bool fire = false;
+    // Rotacionar para os lados
     float dx = 0.0f;
 };
 
@@ -32,4 +35,5 @@ public:
     glm::vec4 foward;
     glm::vec4 up;
     glm::vec4 moving;
+    glm::vec4 camera;
 };
