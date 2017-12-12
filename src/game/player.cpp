@@ -8,7 +8,7 @@ Player::Player()
     moving = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-void Player::update(move_state actions)
+void Player::update(move_state &actions)
 {
     if (actions.up)
     {
@@ -35,6 +35,8 @@ void Player::update(move_state actions)
         moveRight();
     }
 
+    yaw(actions.dx);
+
     // Limita velocidade maxima no plano x/y
     /*
     float horizontal_speed = sqrt(moving.x*moving.x + moving.y*moving.y);
@@ -58,6 +60,9 @@ void Player::update(move_state actions)
     {
         position.y = 0;
     }
+
+    // Zera a rotacao
+    actions.dx = 0.0f;
 }
 
 
@@ -91,5 +96,9 @@ void Player::moveRight()
     moving += crossproduct(foward, up) * 0.00005f;
 }
 
+void Player::yaw(float dx)
+{
+    foward = foward * Matrix_Rotate_Y(dx * 0.001f);
+}
 
 

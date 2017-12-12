@@ -9,6 +9,8 @@ struct move_state
     bool backward = false;
     bool left = false;
     bool right = false;
+
+    float dx = 0.0f;
 };
 
 class Player
@@ -16,13 +18,15 @@ class Player
 public:
     Player();
 
-    void update(move_state actions);
+    void update(move_state &actions);
     void moveUp();
     void moveDown();
     void moveFoward();
     void moveBackward();
     void moveLeft();
     void moveRight();
+
+    void yaw(float dx);
 
     glm::vec4 position;
     glm::vec4 foward;
