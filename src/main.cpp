@@ -46,7 +46,6 @@
 
 // Headers especificos do jogo
 #include "game/world.h"
-#include "game/player.h"
 
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
@@ -157,7 +156,6 @@ float g_CameraDistance = 3.5f; // Distância da câmera para a origem
 
 // Variavel do jogador
 auto world = World();
-auto player = Player();
 move_state player_actions;
 
 // Variável que controla o tipo de projeção utilizada: perspectiva ou ortográfica.
@@ -299,7 +297,7 @@ int main(int argc, char* argv[])
     while (!glfwWindowShouldClose(window))
     {
         // Atualiza o estado do jogo
-        player.update(player_actions);
+        world.update(player_actions);
 
 
 
@@ -322,10 +320,10 @@ int main(int argc, char* argv[])
         glUseProgram(program_id);
 
         // Calcula a posicao da camera de acordo com o jogador
-        glm::vec4 camera_position_c  = player.position;
-        glm::vec4 camera_lookat_l    = player.position + player.foward;
+        glm::vec4 camera_position_c  = world.player.position;
+        glm::vec4 camera_lookat_l    = world.player.position + world.player.foward;
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
-        glm::vec4 camera_up_vector   = player.up;
+        glm::vec4 camera_up_vector   = world.player.up;
 
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slide 169 do
