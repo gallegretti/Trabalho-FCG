@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <GLFW/glfw3.h>
+#include <random>
 #include "game/cow.h"
 #include "game/player.h"
 #include "game/missle.h"
@@ -24,6 +25,10 @@ public:
 private:
     void updateMissiles();
 
+    void updateCows();
+
     double last_fire_time = 0.0;
+
+    const int COWS = 100;
 
 };

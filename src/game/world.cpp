@@ -2,8 +2,15 @@
 
 World::World()
 {
-    // TODO: Gerar N vacas aleatorias
-    cows = { Cow(glm::vec4(5.0f, -0.5f, 0.0f, 1.0f)), Cow(glm::vec4(-5.0f, -0.5f, 0.0f, 1.0f)) };
+    // Gera algumas vacas
+    cows.reserve(COWS);
+    std::default_random_engine generator;
+    std::uniform_real_distribution<float> distribution(-100.0f, 100.0f);
+    for (auto i = 0; i < COWS; i++)
+    {
+        auto random_position = glm::vec4(distribution(generator),0.0f,distribution(generator), 1.0f);
+        cows.push_back(random_position);
+    }
 }
 
 void World::update(move_state &actions)
@@ -21,6 +28,15 @@ void World::update(move_state &actions)
     actions.fire = false;
 
     updateMissiles();
+    updateCows();
+}
+
+void World::updateCows()
+{
+    for (auto &cow : cows)
+    {
+        cow.update();
+    }
 }
 
 void World::updateMissiles()
