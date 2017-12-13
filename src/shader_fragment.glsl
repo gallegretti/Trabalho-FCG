@@ -23,6 +23,7 @@ uniform mat4 projection;
 #define BUNNY  1
 #define PLANE  2
 #define COW    3
+#define MISSILE 4
 uniform int object_id;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
@@ -70,6 +71,10 @@ void main()
     float V = 0.0;
 
     vec3 Kd;
+    if ( object_id == MISSILE)
+    {
+        Kd = vec3(1.0, 0.0, 0.0);
+    }
     if ( object_id == SPHERE )
     {
         // Projeção esférica:

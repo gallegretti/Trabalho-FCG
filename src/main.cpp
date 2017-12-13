@@ -258,6 +258,10 @@ int main(int argc, char* argv[])
     ComputeNormals(&spheremodel);
     BuildTrianglesAndAddToVirtualScene(&spheremodel);
 
+    ObjModel missilemodel("../../data/missile.obj");
+    ComputeNormals(&missilemodel);
+    BuildTrianglesAndAddToVirtualScene(&missilemodel);
+
     ObjModel bunnymodel("../../data/bunny.obj");
     ComputeNormals(&bunnymodel);
     BuildTrianglesAndAddToVirtualScene(&bunnymodel);
@@ -368,10 +372,11 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(view_uniform       , 1 , GL_FALSE , glm::value_ptr(view));
         glUniformMatrix4fv(projection_uniform , 1 , GL_FALSE , glm::value_ptr(projection));
 
-        #define SPHERE 0
-        #define BUNNY  1
-        #define PLANE  2
-        #define COW    3
+        #define SPHERE  0
+        #define BUNNY   1
+        #define PLANE   2
+        #define COW     3
+        #define MISSILE 4
 
         // Desenhamos os misseis
         for (const auto &missile : world.missiles)
@@ -382,8 +387,8 @@ int main(int argc, char* argv[])
                 * missile.rotation_matrix;
                 //* Matrix_Rotate_Y(3.14);
             glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-            glUniform1i(object_id_uniform, SPHERE);
-            DrawVirtualObject("sphere");
+            glUniform1i(object_id_uniform, MISSILE);
+            DrawVirtualObject("missile");
         }
 
 
