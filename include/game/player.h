@@ -14,6 +14,8 @@ struct move_state
     bool fire = false;
     // Rotacionar para os lados
     float dx = 0.0f;
+    // Trava a camera na vaca
+    bool toggle_lock_cow = false;
 };
 
 class Player

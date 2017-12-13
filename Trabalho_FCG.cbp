@@ -63,6 +63,10 @@
 		<Unit filename="include/GLFW/glfw3native.h" />
 		<Unit filename="include/KHR/khrplatform.h" />
 		<Unit filename="include/dejavufont.h" />
+		<Unit filename="include/game/cow.h" />
+		<Unit filename="include/game/missle.h" />
+		<Unit filename="include/game/player.h" />
+		<Unit filename="include/game/world.h" />
 		<Unit filename="include/glad/glad.h" />
 		<Unit filename="include/glm/CMakeLists.txt" />
 		<Unit filename="include/glm/common.hpp" />
@@ -330,12 +334,14 @@
 		<Unit filename="include/stb_image.h" />
 		<Unit filename="include/tiny_obj_loader.h" />
 		<Unit filename="include/utils.h" />
-		<Unit filename="include/game/player.h" />
+		<Unit filename="src/game/cow.cpp" />
+		<Unit filename="src/game/missle.cpp" />
+		<Unit filename="src/game/player.cpp" />
+		<Unit filename="src/game/world.cpp" />
 		<Unit filename="src/glad.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/main.cpp" />
-		<Unit filename="src/game/player.cpp" />
 		<Unit filename="src/shader_fragment.glsl" />
 		<Unit filename="src/shader_vertex.glsl" />
 		<Unit filename="src/stb_image.cpp" />

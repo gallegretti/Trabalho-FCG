@@ -143,7 +143,6 @@ float g_ScreenRatio = 1.0f;
 // "g_LeftMouseButtonPressed = true" se o usuário está com o botão esquerdo do mouse
 // pressionado no momento atual. Veja função MouseButtonCallback().
 bool g_LeftMouseButtonPressed = false;
-bool g_RightMouseButtonPressed = false; // Análogo para botão direito do mouse
 bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mouse
 
 // Variáveis que definem a câmera em coordenadas esféricas, controladas pelo
@@ -323,10 +322,10 @@ int main(int argc, char* argv[])
         glUseProgram(program_id);
 
         // Calcula a posicao da camera de acordo com o jogador
-        glm::vec4 camera_position_c  = world.player.position;
-        glm::vec4 camera_lookat_l    = world.player.position + world.player.camera;
+        glm::vec4 camera_position_c  = world.getCameraPosition();
+        glm::vec4 camera_lookat_l    = world.getCameraPosition() + world.getCameraLookAt();
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c;
-        glm::vec4 camera_up_vector   = world.player.up;
+        glm::vec4 camera_up_vector   = world.getCameraUp();
 
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slide 169 do
@@ -381,11 +380,9 @@ int main(int argc, char* argv[])
         // Desenhamos os misseis
         for (const auto &missile : world.missiles)
         {
-            // TODO: Mudar 'sphere' para missile
             model = Matrix_Translate(missile.position.x, missile.position.y, missile.position.z)
                 * Matrix_Scale(0.05f, 0.05f, 0.05f)
                 * missile.rotation_matrix;
-                //* Matrix_Rotate_Y(3.14);
             glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
             glUniform1i(object_id_uniform, MISSILE);
             DrawVirtualObject("missile");
@@ -967,20 +964,10 @@ void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     }
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
     {
-        // Se o usuário pressionou o botão esquerdo do mouse, guardamos a
-        // posição atual do cursor nas variáveis g_LastCursorPosX e
-        // g_LastCursorPosY.  Também, setamos a variável
-        // g_RightMouseButtonPressed como true, para saber que o usuário está
-        // com o botão esquerdo pressionado.
-        glfwGetCursorPos(window, &g_LastCursorPosX, &g_LastCursorPosY);
-        g_RightMouseButtonPressed = true;
+        // Trava na vaca ou nao
+        player_actions.toggle_lock_cow = true;
     }
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
-    {
-        // Quando o usuário soltar o botão esquerdo do mouse, atualizamos a
-        // variável abaixo para false.
-        g_RightMouseButtonPressed = false;
-    }
+
     if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
     {
         // Se o usuário pressionou o botão esquerdo do mouse, guardamos a
