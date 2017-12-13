@@ -4,7 +4,7 @@ Player::Player()
 {
     position = glm::vec4(-100.0f, 5.0f, 1.0f, 1.0f);
     foward = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-    camera = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f); // TODO:
+    camera = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
     up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     moving = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 }

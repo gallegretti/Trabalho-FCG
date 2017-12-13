@@ -300,7 +300,6 @@ int main(int argc, char* argv[])
         world.update(player_actions);
 
 
-
         // Aqui executamos as operações de renderização
 
         // Definimos a cor do "fundo" do framebuffer como branco.  Tal cor é
@@ -375,14 +374,18 @@ int main(int argc, char* argv[])
         #define COW    3
 
         // Desenhamos os misseis
-        for (const auto &missle : world.missiles)
+        for (const auto &missile : world.missiles)
         {
-            // TODO: Mudar o modelo, ajustar orientação
-            model = Matrix_Translate(missle.position.x, missle.position.y, missle.position.z);
+            // TODO: Mudar 'sphere' para missile
+            model = Matrix_Translate(missile.position.x, missile.position.y, missile.position.z)
+                * Matrix_Scale(0.05f, 0.05f, 0.05f)
+                * missile.rotation_matrix;
+                //* Matrix_Rotate_Y(3.14);
             glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
             glUniform1i(object_id_uniform, SPHERE);
             DrawVirtualObject("sphere");
         }
+
 
 
         // Desenhamos as vacas
@@ -394,29 +397,12 @@ int main(int argc, char* argv[])
             DrawVirtualObject("cow");
         }
 
-
-
-
         // Desenhamos o plano do chão
         model = Matrix_Translate(0.0f,-0.5f,0.0f)
             * Matrix_Scale(100.0f, 1.0f, 100.0f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
-
-        // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
-        // passamos por todos os sistemas de coordenadas armazenados nas
-        // matrizes the_model, the_view, e the_projection; e escrevemos na tela
-        // as matrizes e pontos resultantes dessas transformações.
-        //glm::vec4 p_model(0.5f, 0.5f, 0.5f, 1.0f);
-        //TextRendering_ShowModelViewProjection(window, projection, view, model, p_model);
-
-        // Imprimimos na tela os ângulos de Euler que controlam a rotação do
-        // terceiro cubo.
-        //TextRendering_ShowEulerAngles(window);
-
-        // Imprimimos na informação sobre a matriz de projeção sendo utilizada.
-        //TextRendering_ShowProjection(window);
 
         // Imprimimos na tela informação sobre o número de quadros renderizados
         // por segundo (frames per second).
