@@ -1,8 +1,5 @@
 #include "game/world.h"
 
-//sei que não é a maneira ideal de fazer isso...
-int score = 0;
-
 World::World()
 {
     // Gera algumas vacas
@@ -86,7 +83,7 @@ void World::updateCollisions()
                 missiles.erase(missile++);
                 cows.erase(cow++);
                 removed_cow = true;
-                score++; //aumenta score
+                score += 100; //aumenta score
                 break;
             }
             else

@@ -32,6 +32,9 @@ public:
     glm::vec4 getCameraLookAt();
     glm::vec4 getCameraUp();
 
+    // Score
+    int score = 0;
+
 private:
     void updateMissiles();
 

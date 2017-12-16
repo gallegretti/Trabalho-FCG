@@ -1225,14 +1225,13 @@ void TextRendering_Score(GLFWwindow* window){
 
     static char  tscore[10] = "SCORE:";
     static char numscore[20] = "0";
-    extern int score;
+    int score = world.score;
 
     if (score>0){
-        snprintf(numscore, 20, "%.2i", score*100);
+        snprintf(numscore, 20, "%.2i", score);
     }
 
     float lineheight = TextRendering_LineHeight(window);
-    float charwidth = TextRendering_CharWidth(window);
 
     TextRendering_PrintString(window, tscore, -1.0f, 1.0f-lineheight, 1.0f);
     TextRendering_PrintString(window, numscore, -1.0f, 1.0f-(2*lineheight), 1.0f);
