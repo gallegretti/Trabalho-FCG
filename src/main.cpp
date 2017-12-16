@@ -103,6 +103,7 @@ void TextRendering_PrintMatrixVectorProductDivW(GLFWwindow* window, glm::mat4 M,
 void TextRendering_ShowModelViewProjection(GLFWwindow* window, glm::mat4 projection, glm::mat4 view, glm::mat4 model, glm::vec4 p_model);
 void TextRendering_ShowProjection(GLFWwindow* window);
 void TextRendering_ShowFramesPerSecond(GLFWwindow* window);
+void TextRendering_Score(GLFWwindow* window);   //Desenha placar no topo da tela
 
 // Funções callback para comunicação com o sistema operacional e interação do
 // usuário. Veja mais comentários nas definições das mesmas, abaixo.
@@ -250,7 +251,7 @@ int main(int argc, char* argv[])
 
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("../../data/grass.jpg");      // TextureImage0
-    LoadTextureImage("../../data/tc-earth_daymap_surface.jpg"); // TextureImage1
+    LoadTextureImage("../../data/cowtex.jpg"); // TextureImage1
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -410,6 +411,9 @@ int main(int argc, char* argv[])
         // Imprimimos na tela informação sobre o número de quadros renderizados
         // por segundo (frames per second).
         TextRendering_ShowFramesPerSecond(window);
+
+        // Imprime também o escore atual do jogador
+        TextRendering_Score(window);
 
         // O framebuffer onde OpenGL executa as operações de renderização não
         // é o mesmo que está sendo mostrado para o usuário, caso contrário
@@ -1210,8 +1214,29 @@ void TextRendering_ShowFramesPerSecond(GLFWwindow* window)
     float charwidth = TextRendering_CharWidth(window);
 
     TextRendering_PrintString(window, buffer, 1.0f-(numchars + 1)*charwidth, 1.0f-lineheight, 1.0f);
+
 }
 
+//Escreve o placar atual do jogador. 1 vaca = 100 pontos
+void TextRendering_Score(GLFWwindow* window){
+
+    if ( !g_ShowInfoText )
+        return;
+
+    static char  tscore[10] = "SCORE:";
+    static char numscore[20] = "0";
+    extern int score;
+
+    if (score>0){
+        snprintf(numscore, 20, "%.2i", score*100);
+    }
+
+    float lineheight = TextRendering_LineHeight(window);
+    float charwidth = TextRendering_CharWidth(window);
+
+    TextRendering_PrintString(window, tscore, -1.0f, 1.0f-lineheight, 1.0f);
+    TextRendering_PrintString(window, numscore, -1.0f, 1.0f-(2*lineheight), 1.0f);
+}
 // Função para debugging: imprime no terminal todas informações de um modelo
 // geométrico carregado de um arquivo ".obj".
 // Veja: https://github.com/syoyo/tinyobjloader/blob/22883def8db9ef1f3ffb9b404318e7dd25fdbb51/loader_example.cc#L98

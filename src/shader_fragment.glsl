@@ -81,9 +81,9 @@ void main()
     if ( object_id == MISSILE)
     {
         Kd = vec3(1.0, 0.0, 0.0);
-        Ks = vec3(0.8,0.8,0.8);
-        Ka = vec3(0.4,0.4,0.4);
-        q = 32.0;
+        Ks = vec3(1.0,1.0,1.0);
+        Ka = vec3(0.0,0.0,0.0);
+        q = 12.0;
     }
     if ( object_id == COW )
     {
@@ -96,10 +96,10 @@ void main()
         U = (omega + M_PI) / (2* M_PI);
         V = (phi + M_PI_2) / M_PI;
 
-        // Textura do planeta
+        // Textura da vaca
         Kd = texture(TextureImage1, vec2(U,V)).rgb;
-        Ks = vec3(1.0,0.0,0.0);
-        Ka = vec3(1.0,0.0,0.0);
+        Ks = vec3(0.0,0.0,0.0);
+        Ka = vec3(0.1,0.1,0.1);
         q = 1.0;
     }
     else if ( object_id == PLANE )
