@@ -266,6 +266,7 @@ int main(int argc, char* argv[])
     BuildTrianglesAndAddToVirtualScene(&bunnymodel);
 
     ObjModel planemodel("../../data/plane.obj");
+
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
 
@@ -395,7 +396,7 @@ int main(int argc, char* argv[])
         {
             model = Matrix_Translate(cow.position.x,cow.position.y,cow.position.z);
             glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-            glUniform1i(object_id_uniform, SPHERE);
+            glUniform1i(object_id_uniform, COW);
             DrawVirtualObject("cow");
         }
 
@@ -459,8 +460,8 @@ void LoadTextureImage(const char* filename)
     glGenSamplers(1, &sampler_id);
 
     // Veja slide 160 do documento "Aula_20_e_21_Mapeamento_de_Texturas.pdf"
-    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glSamplerParameteri(sampler_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Parâmetros de amostragem da textura. Falaremos sobre eles em uma próxima aula.
     glSamplerParameteri(sampler_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -475,6 +476,7 @@ void LoadTextureImage(const char* filename)
     GLuint textureunit = g_NumLoadedTextures;
     glActiveTexture(GL_TEXTURE0 + textureunit);
     glBindTexture(GL_TEXTURE_2D, texture_id);
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindSampler(textureunit, sampler_id);
