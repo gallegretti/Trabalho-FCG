@@ -105,8 +105,8 @@ void main()
     else if ( object_id == PLANE )
     {
         // Projecao planar:
-        U = texcoords.x;
-        V = texcoords.y;
+        U = texcoords.x * 100.0f;
+        V = texcoords.y * 100.0f;
 
         // Textura da grama
         Kd = texture(TextureImage0, vec2(U,V)).rgb;

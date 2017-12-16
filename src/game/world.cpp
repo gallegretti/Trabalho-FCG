@@ -7,7 +7,7 @@ World::World()
     std::uniform_real_distribution<float> distribution(-100.0f, 100.0f);
     for (auto i = 0; i < COWS; i++)
     {
-        auto random_position = glm::vec4(distribution(generator),0.0f,distribution(generator), 1.0f);
+        auto random_position = glm::vec4(distribution(generator),0.38f,distribution(generator), 1.0f);
         cows.push_back(random_position);
     }
     looking_at_cow = false;
