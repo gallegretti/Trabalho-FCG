@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <vector>
+#include <list>
 #include <GLFW/glfw3.h>
 #include <random>
 #include "game/cow.h"
@@ -21,8 +21,8 @@ public:
     Player player;
 
     // Entidades no jogo
-    std::vector<Cow> cows;
-    std::vector<Missle> missiles;
+    std::list<Cow> cows;
+    std::list<Missle> missiles;
 
     // Retorna a vaca mais proxima do jogador
     Cow closestCow();
@@ -36,6 +36,8 @@ private:
     void updateMissiles();
 
     void updateCows();
+
+    void updateCollisions();
 
     double last_fire_time = 0.0;
 

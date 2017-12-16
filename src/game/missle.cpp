@@ -13,3 +13,14 @@ Missle::Missle(glm::vec4 position, glm::vec4 foward)
     this->rotation_matrix = Matrix_Rotate(-Angle, c);
 
 }
+
+glm::vec4 Missle::collisionSphereCenter()
+{
+    // TODO: Ajustar
+    return position + foward;
+}
+
+float Missle::collisionSphereRadius()
+{
+    return 0.0001f;
+}

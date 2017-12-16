@@ -3,7 +3,6 @@
 World::World()
 {
     // Gera algumas vacas
-    cows.reserve(COWS);
     std::default_random_engine generator;
     std::uniform_real_distribution<float> distribution(-100.0f, 100.0f);
     for (auto i = 0; i < COWS; i++)
@@ -34,9 +33,9 @@ void World::update(move_state &actions)
     }
     // Desmarca a acao
     actions.fire = false;
-
     updateMissiles();
     updateCows();
+    updateCollisions();
 }
 
 void World::updateCows()
@@ -49,12 +48,54 @@ void World::updateCows()
 
 void World::updateMissiles()
 {
-    for (auto &missle : missiles)
+    auto missile = missiles.begin();
+    while (missile != missiles.end())
     {
         // TODO: Esse foward eh sempre unitario?
-        missle.position += missle.foward * 0.05f;
-        // TODO: Checar por colisoes
-        // TODO: Checar se saiu fora do mapa, e remover
+        missile->position += missile->foward * 0.05f;
+        missile++;
+    }
+}
+
+void World::updateCollisions()
+{
+    auto squaredDistance= [](glm::vec4 position, glm::vec4 position2)
+    {
+        return pow((position2.x - position.x), 2) +
+               pow((position2.y - position.y), 2) +
+               pow((position2.z - position.z), 2);
+    };
+
+    bool removed_cow = false;
+    auto cow = cows.begin();
+    while (cow != cows.end())
+    {
+        auto missile = missiles.begin();
+        while (missile != missiles.end())
+        {
+            // Colisão esfera-esfera
+            auto distance_centers = squaredDistance(cow->collisionSphereCenter(), missile->collisionSphereCenter());
+            auto sum_radius = pow(cow->collisionSphereRadius() + missile->collisionSphereRadius(), 2);
+            if (distance_centers < sum_radius)
+            {
+                // Hit
+                // cout << "HIT" << endl;
+                missiles.erase(missile++);
+                cows.erase(cow++);
+                removed_cow = true;
+                break;
+            }
+            else
+            {
+                missile++;
+            }
+        }
+        if (!removed_cow)
+        {
+            ++cow;
+        }
+        removed_cow = false;
+
     }
 }
 

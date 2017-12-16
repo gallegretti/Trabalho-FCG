@@ -15,3 +15,14 @@ void Cow::update()
         position.x = -100.0f;
     }
 }
+
+glm::vec4 Cow::collisionSphereCenter()
+{
+    // TODO: Ajustar
+    return position;
+}
+
+float Cow::collisionSphereRadius()
+{
+    return 1.0f;
+}

@@ -10,6 +10,9 @@ public:
 
     void update();
 
+    glm::vec4 collisionSphereCenter();
+    float     collisionSphereRadius();
+
     glm::vec4 position;
     glm::vec4 foward;
 };

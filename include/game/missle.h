@@ -8,6 +8,10 @@ public:
 
     Missle(glm::vec4 position, glm::vec4 foward);
 
+
+    glm::vec4 collisionSphereCenter();
+    float     collisionSphereRadius();
+
     glm::vec4 position;
     glm::vec4 foward;
     glm::mat4 rotation_matrix;
