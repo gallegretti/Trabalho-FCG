@@ -267,9 +267,11 @@ int main(int argc, char* argv[])
     BuildTrianglesAndAddToVirtualScene(&bunnymodel);
 
     ObjModel planemodel("../../data/tesselated_plane.obj");
-
+    // !! Deforma o modelo !!
+    world.terrain.deformTerrain(planemodel.attrib);
     ComputeNormals(&planemodel);
     BuildTrianglesAndAddToVirtualScene(&planemodel);
+
 
     ObjModel cowmodel("../../data/cow.obj");
     ComputeNormals(&cowmodel);

@@ -7,7 +7,7 @@ World::World()
     std::uniform_real_distribution<float> distribution(-100.0f, 100.0f);
     for (auto i = 0; i < COWS; i++)
     {
-        auto random_position = glm::vec4(distribution(generator),0.38f,distribution(generator), 1.0f);
+        auto random_position = glm::vec4(distribution(generator),0.0f,distribution(generator), 1.0f);
         cows.push_back(random_position);
     }
     looking_at_cow = false;
@@ -16,6 +16,9 @@ World::World()
 void World::update(move_state &actions)
 {
     player.update(actions);
+    // Colisão com o chão
+    player.position.y = std::max(player.position.y, terrain.getHeight(player.position.x, player.position.z));
+
 
     // Olhando para a vaca?
     if (actions.toggle_lock_cow)
@@ -43,6 +46,7 @@ void World::updateCows()
     for (auto &cow : cows)
     {
         cow.update();
+        cow.position.y = cow.height + terrain.getHeight(cow.position.x, cow.position.z);
     }
 }
 

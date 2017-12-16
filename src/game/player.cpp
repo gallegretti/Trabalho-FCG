@@ -50,12 +50,6 @@ void Player::update(move_state &actions)
     // Efeito de perda de altitude
     position.y -= 0.0002f;
 
-    // Colisão com o chão
-    if (position.y < 0)
-    {
-        position.y = 0;
-    }
-
     // Zera a rotacao
     actions.dx = 0.0f;
 

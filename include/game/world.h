@@ -4,9 +4,11 @@
 #include <list>
 #include <GLFW/glfw3.h>
 #include <random>
+#include "game/skybox.h"
 #include "game/cow.h"
 #include "game/player.h"
 #include "game/missle.h"
+#include "game/terrain.h"
 #include <algorithm>
 
 class World
@@ -34,6 +36,11 @@ public:
 
     // Score
     int score = 0;
+
+    // Skybox
+    Skybox skybox;
+
+    Terrain terrain;
 
 private:
     void updateMissiles();

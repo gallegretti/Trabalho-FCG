@@ -15,4 +15,7 @@ public:
 
     glm::vec4 position;
     glm::vec4 foward;
+
+
+    const float height = 0.38f;
 };
