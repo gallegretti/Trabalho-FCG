@@ -67,7 +67,6 @@
 		<Unit filename="include/game/missle.h" />
 		<Unit filename="include/game/player.h" />
 		<Unit filename="include/game/world.h" />
-		<Unit filename="include/game/terrain.h">
 		<Unit filename="include/glad/glad.h" />
 		<Unit filename="include/glm/CMakeLists.txt" />
 		<Unit filename="include/glm/common.hpp" />
@@ -339,7 +338,6 @@
 		<Unit filename="src/game/missle.cpp" />
 		<Unit filename="src/game/player.cpp" />
 		<Unit filename="src/game/world.cpp" />
-		<Unit filename="src/game/terrain.cpp">
 		<Unit filename="src/glad.c">
 			<Option compilerVar="CC" />
 		</Unit>
