@@ -24,6 +24,12 @@ void World::update(move_state &actions)
     if (actions.toggle_lock_cow)
     {
         looking_at_cow = !looking_at_cow;
+        if (looking_at_cow)
+        {
+            auto look_at = getCameraLookAt();
+            player.foward.x = look_at.x;
+            player.foward.z = look_at.z;
+        }
         actions.toggle_lock_cow = false;
     }
 
