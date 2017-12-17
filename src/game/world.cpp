@@ -45,6 +45,9 @@ void World::update(move_state &actions, double delta)
     updateMissiles(delta);
     updateCows(delta);
     updateCollisions();
+
+    timer -= (current_time - last_time);
+    last_time = current_time;
 }
 
 void World::updateCows(double delta)
@@ -93,7 +96,10 @@ void World::updateCollisions()
                 missiles.erase(missile++);
                 cows.erase(cow++);
                 removed_cow = true;
+                if (!timer<0){ //apenas se o tempo ainda não acabou
                 score += 100; //aumenta score
+                timer += 5; //aumenta tempo restante
+                }
                 break;
             }
             else

@@ -36,6 +36,9 @@ public:
     // Score
     int score = 0;
 
+    // Timer
+    double timer = 6;
+
     Terrain terrain;
 
 private:
@@ -46,6 +49,8 @@ private:
     void updateCollisions();
 
     double last_fire_time = 0.0;
+
+    double last_time = 0.0;
 
     const int COWS = 100;
 

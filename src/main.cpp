@@ -303,16 +303,21 @@ int main(int argc, char* argv[])
     double last_time = glfwGetTime();
     double time = glfwGetTime();
 
-    // Ficamos em loop, renderizando, até que o usuário feche a janela
-    while (!glfwWindowShouldClose(window))
+    int timer = world.timer;
+
+    // Ficamos em loop, renderizando, até que o usuário feche a janela ou o timer tenha expirado há 10s
+    while ((!glfwWindowShouldClose(window)))
     {
         // Atualiza o estado do jogo
         time = glfwGetTime();
         world.update(player_actions, time - last_time);
         last_time = time;
 
-
-
+        timer = world.timer;
+        if (timer<(-10)){
+            glfwTerminate();
+            return 0;
+        }
 
         // Aqui executamos as operações de renderização
 
@@ -1229,22 +1234,37 @@ void TextRendering_ShowFramesPerSecond(GLFWwindow* window)
 //Escreve o placar atual do jogador. 1 vaca = 100 pontos
 void TextRendering_Score(GLFWwindow* window){
 
+    float lineheight = TextRendering_LineHeight(window);
+    static char gameover[20] = "GAME OVER";
+    int timer = world.timer;
+    if (timer<0){
+        TextRendering_PrintString(window, gameover, -1.0f, 1.0f-(6*lineheight), 2.0f);
+
+    }
+
     if ( !g_ShowInfoText )
         return;
 
-    static char  tscore[10] = "SCORE:";
+    static char tscore[10] = "SCORE:";
     static char numscore[20] = "0";
+    static char ttimer[10] = "TIME:";
+    static char numtimer[20] = "60";
     int score = world.score;
 
     if (score>0){
         snprintf(numscore, 20, "%.2i", score);
     }
 
-    float lineheight = TextRendering_LineHeight(window);
+    snprintf(numtimer, 20, "%i", timer);
+
+
 
     TextRendering_PrintString(window, tscore, -1.0f, 1.0f-lineheight, 1.0f);
     TextRendering_PrintString(window, numscore, -1.0f, 1.0f-(2*lineheight), 1.0f);
+    TextRendering_PrintString(window, ttimer, -1.0f, 1.0f-(3*lineheight), 1.0f);
+    TextRendering_PrintString(window, numtimer, -1.0f, 1.0f-(4*lineheight), 1.0f);
 }
+
 // Função para debugging: imprime no terminal todas informações de um modelo
 // geométrico carregado de um arquivo ".obj".
 // Veja: https://github.com/syoyo/tinyobjloader/blob/22883def8db9ef1f3ffb9b404318e7dd25fdbb51/loader_example.cc#L98
