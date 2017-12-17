@@ -96,7 +96,7 @@ void World::updateCollisions()
                 missiles.erase(missile++);
                 cows.erase(cow++);
                 removed_cow = true;
-                if (!timer<0){ //apenas se o tempo ainda não acabou
+                if (timer>-1){ //apenas se o tempo ainda não acabou
                 score += 100; //aumenta score
                 timer += 5; //aumenta tempo restante
                 }

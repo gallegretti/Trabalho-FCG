@@ -37,7 +37,7 @@ public:
     int score = 0;
 
     // Timer
-    double timer = 6;
+    double timer = 60;
 
     Terrain terrain;
 
