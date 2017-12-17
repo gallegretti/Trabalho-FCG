@@ -300,11 +300,18 @@ int main(int argc, char* argv[])
     glm::mat4 the_model;
     glm::mat4 the_view;
 
+    double last_time = glfwGetTime();
+    double time = glfwGetTime();
+
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
         // Atualiza o estado do jogo
-        world.update(player_actions);
+        time = glfwGetTime();
+        world.update(player_actions, time - last_time);
+        last_time = time;
+
+
 
 
         // Aqui executamos as operações de renderização

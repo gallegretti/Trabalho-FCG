@@ -13,9 +13,9 @@ World::World()
     looking_at_cow = false;
 }
 
-void World::update(move_state &actions)
+void World::update(move_state &actions, double delta)
 {
-    player.update(actions);
+    player.update(actions, delta);
     // Colisão com o chão
     player.position.y = std::max(player.position.y, terrain.getHeight(player.position.x, player.position.z));
 
@@ -42,27 +42,27 @@ void World::update(move_state &actions)
     }
     // Desmarca a acao
     actions.fire = false;
-    updateMissiles();
-    updateCows();
+    updateMissiles(delta);
+    updateCows(delta);
     updateCollisions();
 }
 
-void World::updateCows()
+void World::updateCows(double delta)
 {
     for (auto &cow : cows)
     {
-        cow.update();
+        cow.update(delta);
         cow.position.y = cow.height + terrain.getHeight(cow.position.x, cow.position.z);
     }
 }
 
-void World::updateMissiles()
+void World::updateMissiles(double delta)
 {
     auto missile = missiles.begin();
     while (missile != missiles.end())
     {
         // TODO: Esse foward eh sempre unitario?
-        missile->position += missile->foward * 0.05f;
+        missile->position += missile->foward * (float)delta * 25.0f;
         missile++;
     }
 }

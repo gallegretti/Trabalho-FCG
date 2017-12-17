@@ -6,10 +6,10 @@ Cow::Cow(glm::vec4 position)
     //this->foward = foward;
 }
 
-void Cow::update()
+void Cow::update(double delta)
 {
     // TODO: Fazer algo melhor aqui
-    position.x += 0.01f;
+    position.x += 2.0f * delta;
     if (position.x > 100.0f)
     {
         position.x = -100.0f;
@@ -24,5 +24,5 @@ glm::vec4 Cow::collisionSphereCenter()
 
 float Cow::collisionSphereRadius()
 {
-    return 1.0f;
+    return 0.8f;
 }

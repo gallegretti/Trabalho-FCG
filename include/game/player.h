@@ -23,13 +23,13 @@ class Player
 public:
     Player();
 
-    void update(move_state &actions);
-    void moveUp();
-    void moveDown();
-    void moveFoward();
-    void moveBackward();
-    void moveLeft();
-    void moveRight();
+    void update(move_state &actions, double delta);
+    void moveUp(double delta);
+    void moveDown(double delta);
+    void moveFoward(double delta);
+    void moveBackward(double delta);
+    void moveLeft(double delta);
+    void moveRight(double delta);
 
     void yaw(float dx);
 

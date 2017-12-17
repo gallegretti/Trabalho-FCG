@@ -16,7 +16,7 @@ public:
     World();
 
     // Atualiza o estado do jogo
-    void update(move_state &actions);
+    void update(move_state &actions, double delta);
 
     // Jogador
     Player player;
@@ -39,9 +39,9 @@ public:
     Terrain terrain;
 
 private:
-    void updateMissiles();
+    void updateMissiles(double delta);
 
-    void updateCows();
+    void updateCows(double delta);
 
     void updateCollisions();
 

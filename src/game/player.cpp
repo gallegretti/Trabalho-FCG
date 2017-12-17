@@ -9,7 +9,7 @@ Player::Player()
     moving = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-void Player::update(move_state &actions)
+void Player::update(move_state &actions, double delta)
 {
     // Reseta vetor up
     up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
@@ -17,27 +17,27 @@ void Player::update(move_state &actions)
     // Faz acoes
     if (actions.up)
     {
-        moveUp();
+        moveUp(delta);
     }
     if (actions.down)
     {
-        moveDown();
+        moveDown(delta);
     }
     if (actions.foward)
     {
-        moveFoward();
+        moveFoward(delta);
     }
     if (actions.backward)
     {
-        moveBackward();
+        moveBackward(delta);
     }
     if (actions.left)
     {
-        moveLeft();
+        moveLeft(delta);
     }
     if (actions.right)
     {
-        moveRight();
+        moveRight(delta);
     }
     yaw(actions.dx);
 
@@ -76,36 +76,36 @@ void Player::update(move_state &actions)
 }
 
 
-void Player::moveUp()
+void Player::moveUp(double delta)
 {
-    position += (up * 0.002f);
+    position += (up * ((float)delta * 2.0f));
 }
 
-void Player::moveDown()
+void Player::moveDown(double delta)
 {
-    position += (-up * 0.004f);
+    position += (-up * ((float)delta * 4.0f));
 }
 
-void Player::moveFoward()
+void Player::moveFoward(double delta)
 {
-    moving += (foward * 0.00002f);
+    moving += (foward * ((float)delta * 0.02f));
     up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f) * Matrix_Rotate(0.5f, crossproduct(foward, up));
 }
 
-void Player::moveBackward()
+void Player::moveBackward(double delta)
 {
-    moving += (-foward * 0.000015f);
+    moving += (-foward * ((float)delta * 0.015f));
 }
 
-void Player::moveLeft()
+void Player::moveLeft(double delta)
 {
-    moving += -crossproduct(foward, up) * 0.000015f;
+    moving += -crossproduct(foward, up) * (float)delta * 0.015f;
     up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f) * Matrix_Rotate(0.05f, foward);
 }
 
-void Player::moveRight()
+void Player::moveRight(double delta)
 {
-    moving += crossproduct(foward, up) * 0.000015f;
+    moving += crossproduct(foward, up) * (float)delta * 0.015f;
     up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f) * Matrix_Rotate(-0.05f, foward);
 }
 

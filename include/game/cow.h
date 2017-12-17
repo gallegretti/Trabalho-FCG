@@ -8,7 +8,7 @@ public:
 
     Cow(glm::vec4 position);
 
-    void update();
+    void update(double delta);
 
     glm::vec4 collisionSphereCenter();
     float     collisionSphereRadius();
