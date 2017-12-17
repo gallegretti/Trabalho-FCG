@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-    position = glm::vec4(-100.0f, 5.0f, 1.0f, 1.0f);
+    position = glm::vec4(-90.0f, 5.0f, 1.0f, 1.0f);
     foward = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
     camera = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
     up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
@@ -40,6 +40,24 @@ void Player::update(move_state &actions)
         moveRight();
     }
     yaw(actions.dx);
+
+    // Clamp position to map
+    if (position.x < -100.0f)
+    {
+        position.x = -100.0f;
+    }
+    if (position.x > 100.0f)
+    {
+        position.x = 100.0f;
+    }
+    if (position.z < -100.0f)
+    {
+        position.z = -100.0f;
+    }
+    if (position.z > 100.0f)
+    {
+        position.z = 100.0f;
+    }
 
     // Atualiza posicao
     position += moving;
